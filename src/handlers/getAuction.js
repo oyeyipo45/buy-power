@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const commonMiddleware = require('./lib/commonMiddleware');
+import commonMiddleware from './lib/commonMiddleware';
 const createError = require('http-errors');
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -34,4 +34,4 @@ async function getAuction(event, context) {
   };
 }
 
-export const handler = commonMiddleware(getAuctions);export const handler = commonMiddleware(getAuctions);
+export const handler = commonMiddleware(getAuction);

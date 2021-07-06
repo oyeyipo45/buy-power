@@ -1,6 +1,6 @@
 
 const AWS = require('aws-sdk');
-const commonMiddleware = require('./lib/commonMiddleware');
+import commonMiddleware from './lib/commonMiddleware';
 const createError = require('http-errors');
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
