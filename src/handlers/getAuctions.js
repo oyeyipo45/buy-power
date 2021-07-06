@@ -1,9 +1,6 @@
 
 const AWS = require('aws-sdk');
-const middy = require('@middy/core');
-const httpEventNormalizer = require('@middy/http-event-normalizer');
-const httpErrorHandler = require('@middy/http-error-handler');
-const httpJsonBodyParser = require('@middy/http-json-body-parser');
+const commonMiddleware = require('./lib/commonMiddleware');
 const createError = require('http-errors');
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -17,7 +14,7 @@ async function getAuctions(event, context) {
       TableName : process.env.AUCTIONS_TABLE_NAME
     }).promise()
 
-    auctions = result.items
+    auctions = result.Items
   } catch (error) {
     console.error(error)
     throw new createError.InternalServerError(error)
@@ -29,4 +26,6 @@ async function getAuctions(event, context) {
   };
 }
 
-export const handler = middy(getAuctions).use(httpEventNormalizer()).use(httpErrorHandler()).use(httpJsonBodyParser());
+export const handler = commonMiddleware(getAuctions);
+
+
