@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 42);
+/******/ 	return __webpack_require__(__webpack_require__.s = 39);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -5658,74 +5658,6 @@ async function getAuction(event, context) {
 
 const handler = Object(_lib_commonMiddleware__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])(getAuction);
 
-/***/ }),
-/* 40 */,
-/* 41 */,
-/* 42 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handler", function() { return handler; });
-/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var source_map_support_register__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(source_map_support_register__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _lib_commonMiddleware__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
-
-
-const AWS = __webpack_require__(20);
-
-
-
-const createError = __webpack_require__(21);
-
-const {
-  getAuctionById
-} = __webpack_require__(39);
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-async function placeBid(event, context) {
-  const {
-    id
-  } = event.pathParameters;
-  const {
-    amount
-  } = event.body;
-  const auction = await getAuctionById(id);
-
-  if (amount <= auction.highestBid.amount) {
-    throw new createError.Forbidden(`Your bid must be higher than ${auction.highestBid.amount}!`);
-  }
-
-  const params = {
-    TableName: process.env.AUCTIONS_TABLE_NAME,
-    Key: {
-      id
-    },
-    UpdateExpression: 'set highestBid.amount = :amount',
-    ExpressionAttributeValues: {
-      ':amount': amount
-    },
-    ReturnValues: 'ALL_NEW'
-  };
-  let updatedAuction;
-
-  try {
-    const result = await dynamodb.update(params).promise();
-    updatedAuction = result.Attributes;
-  } catch (error) {
-    console.error(error);
-    throw new createError.InternalServerError(error);
-  }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify(updatedAuction)
-  };
-}
-
-const handler = Object(_lib_commonMiddleware__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])(placeBid);
-
 /***/ })
 /******/ ])));
-//# sourceMappingURL=placeBid.js.map
+//# sourceMappingURL=getAuction.js.map
