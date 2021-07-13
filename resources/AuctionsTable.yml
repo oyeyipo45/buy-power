@@ -6,7 +6,7 @@ AuctionsTable:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: statue
+          - AttributeName: status
             AttributeType: S
           - AttributeName: endingAt
             AttributeType: S

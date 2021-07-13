@@ -1,7 +1,7 @@
-const AWS = require('aws-sdk');
-import commonMiddleware from './lib/commonMiddleware';
-const createError = require('http-errors');
-const { getAuctionById } = require('./getAuction')
+import AWS from 'aws-sdk';
+import commonMiddleware from '../lib/commonMiddleware';
+import createError from 'http-errors';
+import { getAuctionById } from './getAuction'
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
