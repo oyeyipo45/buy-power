@@ -8,39 +8,48 @@ import placeBidSchema from '../lib/schemas/placeBidSchema.js';
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function placeBid(event, context) {
+  const { id } = event.pathParameters;
+  const { amount } = event.body;
+  const { email } = event.requestContext.authorizer;
 
-    const { id } = event.pathParameters;
-    const { amount } = event.body;
+  const auction = await getAuctionById(id);
 
-    const auction = await getAuctionById(id)
-
-  if (auction.status !== 'OPEN') {
-     throw new createError.Forbidden(`You cannot place bid on closed Auctions`);
+  // Bid identity validation
+  if (email === auction.seller) {
+    throw new createError.Forbidden(`You cannot place bid on your own Auctions`);
   }
 
-    if (amount <= auction.highestBid.amount) {
-        throw new createError.Forbidden(`Your bid must be higher than ${auction.highestBid.amount}!`)
-    }
+  // Avoid double bidding
+  if (email === auction.highestBid.bidder) {
+    throw new createError.Forbidden(`You are already the highest bidder`);
+  }
 
-    const params = {
-      TableName: process.env.AUCTIONS_TABLE_NAME,
-      Key: { id },
-      UpdateExpression: 'set highestBid.amount = :amount',
-      ExpressionAttributeValues: {
-        ':amount': amount,
-      },
-      ReturnValues: 'ALL_NEW',
-    };
+  // Auction status validation
+  if (auction.status !== 'OPEN') {
+    throw new createError.Forbidden(`You cannot place bid on closed Auctions`);
+  }
 
-    let updatedAuction;
+  if (amount <= auction.highestBid.amount) {
+    throw new createError.Forbidden(`Your bid must be higher than ${auction.highestBid.amount}!`);
+  }
+
+  const params = {
+    TableName: process.env.AUCTIONS_TABLE_NAME,
+    Key: { id },
+    UpdateExpression: 'set highestBid.amount = :amount, highestBid.bidder = :bidder',
+    ExpressionAttributeValues: {
+      ':amount': amount,
+      ':bidder': email,
+    },
+    ReturnValues: 'ALL_NEW',
+  };
+
+  let updatedAuction;
 
   try {
-    const result = await dynamodb
-      .update(params)
-        .promise();
-      
-    updatedAuction = result.Attributes
+    const result = await dynamodb.update(params).promise();
 
+    updatedAuction = result.Attributes;
   } catch (error) {
     console.error(error);
     throw new createError.InternalServerError(error);
