@@ -25476,26 +25476,17 @@ var validator_default = /*#__PURE__*/__webpack_require__.n(validator);
 const schema = {
   type: 'object',
   properties: {
-    queryStringParameters: {
-      type: 'object',
-      properties: {
-        id: {
-          type: 'string'
-        }
-      },
-      required: ['id']
-    },
     body: {
       type: 'object',
       properties: {
         amount: {
-          type: 'string'
+          type: 'number'
         }
       },
       required: ['amount']
     }
   },
-  required: ['queryStringParameters', 'body']
+  required: ['body']
 };
 /* harmony default export */ var placeBidSchema = (schema);
 // CONCATENATED MODULE: /Users/damilila/Documents/personal/buy-power/src/handlers/placeBid.js
