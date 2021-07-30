@@ -55,7 +55,7 @@ resources:
         ResponseType: UNAUTHORIZED
         RestApiId:
           Ref: 'ApiGatewayRestApi'
-        StatusCode: '401'
+        StatusCode: '403'
 custom:
   bundle:
     linting: false

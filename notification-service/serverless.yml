@@ -10,11 +10,24 @@ provider:
   runtime: nodejs12.x
   memorySize: 256
   stage: ${opt:stage, 'dev'}
+  iamRoleStatements:
+    - ${file(iam/sendMailIAM.yml):SendMailIAM}
+
+resources:
+  Resources:
+    MailQueue: ${file(resources/MailQueue.yml):MailQueue}
   
 functions:
-  hello:
-    handler: src/handlers/hello.handler
-    events:
-      - http:
-          method: GET
-          path: /hello
+  sendMail:
+    handler: src/handlers/sendMail.handler
+    # events:
+    #   - http:
+    #       method: GET
+    #       path: /sendMail
+custom:
+  mailQueue:
+    name: MailQueue-${self:provider.stage}
+    arn: !GetAtt MailQueue.arn
+  bundle:
+    linting: false
+ 
