@@ -20,14 +20,15 @@ resources:
 functions:
   sendMail:
     handler: src/handlers/sendMail.handler
-    # events:
-    #   - http:
-    #       method: GET
-    #       path: /sendMail
+    events:
+      - sqs:
+          arn: ${self:custom.mailQueue.arn}
+          batchSize: 1
 custom:
   mailQueue:
     name: MailQueue-${self:provider.stage}
-    arn: !GetAtt MailQueue.arn
+    arn: !GetAtt MailQueue.Arn
+    url: !Ref MailQueue
   bundle:
     linting: false
  
