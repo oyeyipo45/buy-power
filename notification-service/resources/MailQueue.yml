@@ -11,4 +11,4 @@ Outputs:
   MailQueueUrl:
     Value: ${self:custom.mailQueue.url}
     Export:
-      N ame: ${self:custom.mailQueue.name}-Url
+      Name: ${self:custom.mailQueue.name}-Url
