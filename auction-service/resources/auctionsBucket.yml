@@ -15,7 +15,7 @@ AuctionsBucketPolicy:
     PolicyDocument:
       Statement:
         - Sid: PublicRead
-          Effect: Allow
+          Effect: Allow 
           Principal: '*'
           Action:
             - s3:GetObject
