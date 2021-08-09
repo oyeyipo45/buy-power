@@ -29,26 +29,47 @@ export async function closeAuction(auction) {
     const { title, seller, highestBid } = auction
     const { amount, bidder } = highestBid
 
-    const notifySeller = sqs.sendMessage({
-        QueueUrl: process.env.MAIL_QUEUE_URL,
-        MessageBody: JSON.stringify({
-            subject: 'Your item has been sold',
-            recipitent: seller,
-            body: `Your item "${title}" has been sold for $${amount}`
-        })
-    }).promise()
+    console.log(highestBid)
 
 
-    const notifyBidder = sqs
-      .sendMessage({
-        QueueUrl: process.env.MAIL_QUEUE_URL,
-        MessageBody: JSON.stringify({
-          subject: 'You won an auction',
-          recipitent: bidder,
-          body: `You just scored yourself a great deal buying "${title}" for the amount of $${amount}`,
-        }),
-      })
-        .promise();
+    if (amount === 0) {
+         await sqs.sendMessage({
+             QueueUrl: process.env.MAIL_QUEUE_URL,
+             MessageBody: JSON.stringify({
+               subject: 'No Bids',
+               recipient: seller,
+               body: `Your item "${title}" did not get any bids`,
+             }),
+           }).promise();
     
-    return Promise.all([notifyBidder, notifySeller])
+        return;
+    }
+
+    if (bidder) {
+        const notifySeller = sqs
+          .sendMessage({
+            QueueUrl: process.env.MAIL_QUEUE_URL,
+            MessageBody: JSON.stringify({
+              subject: 'Your item has been sold',
+              recipient: seller,
+              body: `Your item "${title}" has been sold for $${amount}`,
+            }),
+          })
+          .promise();
+
+        const notifyBidder = sqs
+          .sendMessage({
+            QueueUrl: process.env.MAIL_QUEUE_URL,
+            MessageBody: JSON.stringify({
+              subject: 'You won an auction',
+              recipient: bidder,
+              body: `You just scored yourself a great deal buying "${title}" for the amount of $${amount}`,
+            }),
+          })
+            .promise();
+        
+         return Promise.all([notifySeller, notifyBidder]);
+   }
+    
+   
 }
