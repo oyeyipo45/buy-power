@@ -12,6 +12,8 @@ provider:
   stage: ${opt:stage, 'dev'}
   iamRoleStatements:
     - ${file(iam/sendMailIAM.yml):SendMailIAM}
+    
+
 
 resources:
   Resources:
